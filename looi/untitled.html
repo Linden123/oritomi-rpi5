@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Text Face Robot Pet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      image-rendering: pixelated;
+    }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background-color: #0a0a1a;
+      color: #00ffcc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      user-select: none;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(0, 255, 204, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 204, 0.1) 0%, transparent 20%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      border: 4px solid #00ffcc;
+      padding: 20px;
+      background: rgba(5, 15, 25, 0.95);
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+      position: relative;
+      overflow: hidden;
+      border-image: repeating-linear-gradient(45deg, #00ffcc, #00ffcc 4px, transparent 4px, transparent 8px) 5;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00ffcc;
+      position: relative;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px #00ffcc;
+      color: #00ffcc;
+      padding: 5px;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc; }
+      to { text-shadow: 0 0 15px #00ffcc, 0 0 20px #00ffcc, 0 0 25px #00ffcc; }
+    }
+
+    .status-display {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 12px;
+      text-shadow: 0 0 5px #00ffcc;
+      margin-top: 10px;
+    }
+
+    .buttons-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      background-color: #00ffcc;
+      color: #002a22;
+      border: 3px solid #003a33;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      cursor: pointer;
+      min-width: 120px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 0 #003a33;
+      z-index: 1;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #00ccaa;
+      box-shadow: 0 0 10px #00ffcc, 0 2px 0 #003a33;
+      transform: translateY(2px);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #003a33;
+    }
+
+    button:disabled {
+      background-color: #004d40;
+      color: #002822;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .main-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+      gap: 20px;
+    }
+
+    .meter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 320px;
+    }
+
+    .meter-label {
+      font-size: 10px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+
+    .vertical-meter {
+      width: 30px;
+      height: 250px;
+      border: 4px solid #00ffcc;
+      background-color: #001a1a;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    .vertical-meter::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(0, 255, 204, 0.1) 50%, 
+        transparent 100%);
+      pointer-events: none;
+    }
+
+    #moodMeter {
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(to top, #00aaff, #00ffcc);
+      transition: height 0.5s;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    #xpBarContainer {
+      border-color: #ff5500;
+    }
+
+    #xpBar {
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to top, #ffaa00, #00ff00);
+      transition: height 0.5s;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .robot-container {
+      flex: 1;
+      text-align: center;
+      padding: 25px 20px;
+      border: 4px solid #00ffcc;
+      background: linear-gradient(135deg, #001a1a, #003030);
+      position: relative;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+    }
+
+    .mode-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 5px 10px;
+      font-size: 8px;
+      text-transform: uppercase;
+      border: 1px solid #00ffcc;
+      border-radius: 3px;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+
+    .face-display-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 150px;
+      background-color: #001a1a;
+      border: 2px solid #00ffcc;
+      border-radius: 8px;
+      box-shadow: 0 0 15px #00ffcc;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .face-display {
+      font-size: 70px;
+      color: #00ffcc;
+      cursor: pointer;
+      transition: transform 0.3s, text-shadow 0.3s;
+      line-height: 1;
+      text-shadow: 0 0 20px currentColor;
+      display: block;
+      min-width: 300px;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .voice-line {
+      font-size: 12px;
+      min-height: 30px;
+      color: #00ffcc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 5px #00ffcc;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      margin-top: 10px;
+      border: 1px solid #00ffcc;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    .panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(10, 20, 30, 0.95);
+      color: #00ffcc;
+      border: 4px solid #00ffcc;
+      padding: 30px 25px 25px;
+      z-index: 1000;
+      display: none;
+      max-width: 90%;
+      width: 400px;
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.8);
+      border-radius: 10px;
+      border-image: repeating-linear-gradient(45deg, #00ffcc, #00ffcc 4px, transparent 4px, transparent 8px) 5;
+    }
+
+    .panel h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #00ffcc;
+      color: #00ffcc;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 22px;
+      height: 22px;
+      background-color: #ff3333;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.2s;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+      z-index: 10;
+    }
+
+    .close-btn:hover {
+      background-color: #ff5555;
+      transform: scale(1.1);
+    }
+
+    .settings-content, .tutorial-content, .shop-content {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .settings-content label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 30px;
+      cursor: pointer;
+      border: 2px solid #00ffcc;
+      background: #000;
+      border-radius: 4px;
+    }
+
+    select {
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      padding: 10px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      width: 100%;
+      text-shadow: 0 0 5px #00ffcc;
+      border-radius: 4px;
+    }
+
+    .game-face {
+      font-size: 70px;
+      margin: 20px 0;
+      display: block;
+      width: 100%;
+      height: 120px;
+      margin: 10px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 1.5s infinite;
+      text-shadow: 0 0 20px currentColor;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .game-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .guess-btn {
+      font-size: 24px;
+      padding: 12px;
+      min-width: 100px;
+      background-color: #00ffcc;
+      color: #002a22;
+      border: 3px solid #003a33;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 0 #003a33;
+      border-radius: 4px;
+    }
+
+    .guess-btn:hover {
+      background-color: #00ccaa;
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #003a33;
+    }
+
+    .guess-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #003a33;
+    }
+
+    #gameResult {
+      min-height: 30px;
+      font-size: 14px;
+      text-align: center;
+      text-shadow: 0 0 5px #00ffcc;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      margin-top: 10px;
+      border: 1px solid #00ffcc;
+      border-radius: 5px;
+    }
+
+    @keyframes xp-glow {
+      0% { box-shadow: 0 0 5px #00ff00; }
+      50% { box-shadow: 0 0 20px #00ff00; }
+      100% { box-shadow: 0 0 5px #00ff00; }
+    }
+
+    .xp-glow {
+      animation: xp-glow 1s infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); opacity: 1; }
+      100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+    }
+
+    .flying-face {
+      position: fixed;
+      font-size: 36px;
+      pointer-events: none;
+      color: #00ffcc;
+      z-index: 1000;
+      animation: float 2s ease-out;
+      text-shadow: 0 0 15px currentColor;
+    }
+
+    .shop-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border: 2px solid #00ffcc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .shop-item button {
+      min-width: 80px;
+      font-size: 9px;
+      padding: 8px;
+    }
+
+    .achievement {
+      padding: 12px;
+      border: 2px solid #00ffcc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .achievement.locked {
+      opacity: 0.6;
+    }
+
+    .achievement-icon {
+      font-size: 24px;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .pet-effects {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .effect {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .coin-display {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 5px 10px;
+      border: 2px solid #ffcc00;
+      border-radius: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .coin-icon {
+      color: #ffcc00;
+      font-size: 16px;
+    }
+
+    .minigame-area {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 20px;
+    }
+
+    .minigame {
+      border: 2px solid #00ffcc;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      text-align: center;
+      flex: 1;
+    }
+
+    .minigame h3 {
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #00ffcc;
+    }
+
+    .minigame button {
+      min-width: 100px;
+    }
+
+    .evolution-bar {
+      height: 10px;
+      background: #002a22;
+      border-radius: 5px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .evolution-progress {
+      height: 100%;
+      background: linear-gradient(to right, #00ffcc, #00aaff);
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    @media (max-width: 768px) {
+      .main-area {
+        flex-direction: column;
+      }
+      
+      button {
+        min-width: 100px;
+        padding: 10px;
+        font-size: 9px;
+      }
+      
+      .robot-container {
+        order: -1;
+        margin-bottom: 20px;
+        height: 280px;
+        max-width: 100%;
+      }
+      
+      .vertical-meter {
+        height: 200px;
+      }
+      
+      .meter-container {
+        height: auto;
+      }
+      
+      .face-display {
+        font-size: 50px;
+        min-width: 250px;
+      }
+      
+      .header h1 {
+        font-size: 18px;
+      }
+      
+      .minigame-area {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body class="default-mode">
+  <div class="container">
+    <div class="coin-display">
+      <span class="coin-icon">🪙</span>
+      <span id="coinCount">100</span>
+    </div>
+    
+    <div class="header">
+      <h1>ENHANCED TEXT FACE ROBOT PET</h1>
+      <div class="status-display">
+        <div class="level">Lv 1</div>
+        <div class="xp-display">XP: 0/100</div>
+        <div class="evolution">Evolution: 0%</div>
+      </div>
+    </div>
+    
+    <div class="buttons-row top-buttons">
+      <button id="petBtn">Pet</button>
+      <button id="feedBtn">Feed</button>
+      <button id="hackBtn">Hack</button>
+      <button id="danceBtn">Dance</button>
+    </div>
+
+    <div class="main-area">
+      <div class="meter-container">
+        <div class="meter-label">MOOD</div>
+        <div id="moodMeterContainer" class="vertical-meter">
+          <div id="moodMeter"></div>
+        </div>
+      </div>
+
+      <div class="robot-container">
+        <div class="mode-indicator">NORMAL</div>
+        <div class="face-display-container">
+          <div class="face-display" id="faceDisplay">(◕‿◕)</div>
+          <div class="pet-effects" id="petEffects"></div>
+        </div>
+        <div class="voice-line" id="voiceLine">Hello, I'm your enhanced robot pet!</div>
+      </div>
+
+      <div class="meter-container">
+        <div class="meter-label">XP</div>
+        <div id="xpBarContainer" class="vertical-meter">
+          <div id="xpBar"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="evolution-bar">
+      <div class="evolution-progress" id="evolutionProgress"></div>
+    </div>
+    
+    <div class="minigame-area">
+      <div class="minigame">
+        <h3>FEEDING MINIGAME</h3>
+        <button id="feedMinigameBtn">Play Now</button>
+        <div>High Score: <span id="feedHighScore">0</span></div>
+      </div>
+      <div class="minigame">
+        <h3>PETTING CHALLENGE</h3>
+        <button id="petChallengeBtn">Start Challenge</button>
+        <div>Record: <span id="pettingRecord">0</span> pets</div>
+      </div>
+    </div>
+
+    <div class="buttons-row bottom-buttons">
+      <button id="sleepBtn">Sleep</button>
+      <button id="dontTouchBtn">No Touch</button>
+      <button id="exterminateBtn">Exterminate</button>
+      <button id="gameBtn">Game Mode</button>
+    </div>
+    
+    <div class="footer">
+      <button id="settingsBtn">Settings</button>
+      <button id="shopBtn">Shop</button>
+      <button id="achievementsBtn">Achievements</button>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel" class="panel">
+    <button class="close-btn">✕</button>
+    <h2>SETTINGS</h2>
+    <div class="settings-content">
+      <label><input type="checkbox" id="soundToggle" checked> Sound On</label>
+      <label><input type="checkbox" id="darkModeToggle"> Dark Mode</label>
+      <label>Theme Color:
+        <input type="color" id="themeColorPicker" value="#00ffcc">
+      </label>
+      <div class="mode-selector">
+        <label>Select Mode:
+          <select id="modeSelector">
+            <option value="default">Default</option>
+            <option value="hacker">Hacker Mode</option>
+            <option value="retro">Retro Mode</option>
+            <option value="night">Night Mode</option>
+            <option value="party">Party Mode</option>
+          </select>
+        </label>
+      </div>
+      <button id="tutorialBtn">Tutorial</button>
+    </div>
+  </div>
+
+  <!-- Tutorial Panel -->
+  <div id="tutorialPanel" class="panel">
+    <button class="close-btn">✕</button>
+    <h2>TUTORIAL</h2>
+    <div class="tutorial-content">
+      <p>- Pet to cheer up your robot</p>
+      <p>- Feed to increase happiness</p>
+      <p>- Hack for surprises and coins</p>
+      <p>- Earn XP and coins to evolve</p>
+      <p>- Play minigames for rewards</p>
+      <p>- Buy items in the shop</p>
+      <p>- Unlock achievements</p>
+      <p>- Try different modes for fun</p>
+    </div>
+  </div>
+
+  <!-- Game Panel -->
+  <div id="gamePanel" class="panel">
+    <button class="close-btn">✕</button>
+    <h2>REACTION GAME</h2>
+    <p>Match the face!</p>
+    <div id="gameFace" class="game-face">(◕‿◕)</div>
+    <div class="game-buttons">
+      <button class="guess-btn">(◕‿◕)</button>
+      <button class="guess-btn">(¬_¬)</button>
+      <button class="guess-btn">(^‿^)</button>
+      <button class="guess-btn">(◉_◉)</button>
+      <button class="guess-btn">(☉_☉)</button>
+    </div>
+    <p id="gameResult"></p>
+  </div>
+
+  <!-- Shop Panel -->
+  <div id="shopPanel" class="panel">
+    <button class="close-btn">✕</button>
+    <h2>ROBOT SHOP</h2>
+    <div class="shop-content">
+      <div class="shop-item">
+        <div>
+          <strong>Mood Booster</strong>
+          <p>+20 Mood | Cost: 50 🪙</p>
+        </div>
+        <button id="buyMoodBooster">Buy</button>
+      </div>
+      <div class="shop-item">
+        <div>
+          <strong>XP Doubler</strong>
+          <p>Double XP for 1 hour | Cost: 100 🪙</p>
+        </div>
+        <button id="buyXPDoubler">Buy</button>
+      </div>
+      <div class="shop-item">
+        <div>
+          <strong>Special Face Pack</strong>
+          <p>Unlock rare faces | Cost: 150 🪙</p>
+        </div>
+        <button id="buyFacePack">Buy</button>
+      </div>
+      <div class="shop-item">
+        <div>
+          <strong>Evolution Catalyst</strong>
+          <p>+10% Evolution | Cost: 200 🪙</p>
+        </div>
+        <button id="buyEvolution">Buy</button>
+      </div>
+      <div class="shop-item">
+        <div>
+          <strong>Party Mode</strong>
+          <p>Unlock Party Mode | Cost: 250 🪙</p>
+        </div>
+        <button id="buyPartyMode">Buy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements Panel -->
+  <div id="achievementsPanel" class="panel">
+    <button class="close-btn">✕</button>
+    <h2>ACHIEVEMENTS</h2>
+    <div class="shop-content">
+      <div class="achievement">
+        <div class="achievement-icon">🥉</div>
+        <div>
+          <strong>First Pet</strong>
+          <p>Pet your robot for the first time</p>
+        </div>
+      </div>
+      <div class="achievement locked">
+        <div class="achievement-icon">🥈</div>
+        <div>
+          <strong>Level Up!</strong>
+          <p>Reach Level 5</p>
+        </div>
+      </div>
+      <div class="achievement locked">
+        <div class="achievement-icon">🥇</div>
+        <div>
+          <strong>Mood Master</strong>
+          <p>Keep mood at max for 24 hours</p>
+        </div>
+      </div>
+      <div class="achievement locked">
+        <div class="achievement-icon">🏆</div>
+        <div>
+          <strong>Minigame Pro</strong>
+          <p>Score 1000 in minigames</p>
+        </div>
+      </div>
+      <div class="achievement locked">
+        <div class="achievement-icon">💎</div>
+        <div>
+          <strong>Evolution Complete</strong>
+          <p>Reach 100% evolution</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Elements
+      const faceDisplay = document.getElementById('faceDisplay');
+      const voiceLine = document.getElementById('voiceLine');
+      const moodMeter = document.getElementById('moodMeter');
+      const xpBar = document.getElementById('xpBar');
+      const levelDisplay = document.querySelector('.level');
+      const xpDisplay = document.querySelector('.xp-display');
+      const modeIndicator = document.querySelector('.mode-indicator');
+      const evolutionProgress = document.getElementById('evolutionProgress');
+      const coinCount = document.getElementById('coinCount');
+      const petEffects = document.getElementById('petEffects');
+      
+      // Buttons
+      const petBtn = document.getElementById('petBtn');
+      const feedBtn = document.getElementById('feedBtn');
+      const hackBtn = document.getElementById('hackBtn');
+      const sleepBtn = document.getElementById('sleepBtn');
+      const dontTouchBtn = document.getElementById('dontTouchBtn');
+      const exterminateBtn = document.getElementById('exterminateBtn');
+      const gameBtn = document.getElementById('gameBtn');
+      const settingsBtn = document.getElementById('settingsBtn');
+      const shopBtn = document.getElementById('shopBtn');
+      const achievementsBtn = document.getElementById('achievementsBtn');
+      const danceBtn = document.getElementById('danceBtn');
+      const feedMinigameBtn = document.getElementById('feedMinigameBtn');
+      const petChallengeBtn = document.getElementById('petChallengeBtn');
+      
+      // Panels
+      const settingsPanel = document.getElementById('settingsPanel');
+      const tutorialPanel = document.getElementById('tutorialPanel');
+      const gamePanel = document.getElementById('gamePanel');
+      const shopPanel = document.getElementById('shopPanel');
+      const achievementsPanel = document.getElementById('achievementsPanel');
+      const closeButtons = document.querySelectorAll('.close-btn');
+      
+      // Settings elements
+      const soundToggle = document.getElementById('soundToggle');
+      const themeColorPicker = document.getElementById('themeColorPicker');
+      const modeSelector = document.getElementById('modeSelector');
+      const tutorialBtn = document.getElementById('tutorialBtn');
+      
+      // Game elements
+      const gameFace = document.getElementById('gameFace');
+      const guessButtons = document.querySelectorAll('.guess-btn');
+      const gameResult = document.getElementById('gameResult');
+      
+      // Shop elements
+      const buyMoodBooster = document.getElementById('buyMoodBooster');
+      const buyXPDoubler = document.getElementById('buyXPDoubler');
+      const buyFacePack = document.getElementById('buyFacePack');
+      const buyEvolution = document.getElementById('buyEvolution');
+      const buyPartyMode = document.getElementById('buyPartyMode');
+      
+      // State variables
+      let moodLevel = 70;
+      let xp = 0;
+      let level = 1;
+      let coins = 100;
+      let evolution = 0;
+      let currentMode = 'default';
+      let soundEnabled = true;
+      let holdTimeout;
+      let pettingRecord = 0;
+      let feedHighScore = 0;
+      let xpDoublerActive = false;
+      let specialFacesUnlocked = false;
+      
+      // Text faces organized by emotion
+      const faces = {
+        happy: ['(^_^)', '(^‿^)', 'UwU', 'ヽ(•‿•)ノ', '(✿◠‿◠)', '(≧◡≦)', '(◕‿◕)', '(ʘ‿ʘ)', '(｡◕‿◕｡)', '(♥‿♥)', 
+                '(＾ｕ＾)', '(^人^)', '(≧ω≦)', '(◠‿◠)', '(∩_∩)', '(*≧ω≦)', '(＠＾◡＾)', '(◔‿◔)', '(⁀‿⁀)', '(◠‿◠✿)'],
+        neutral: ['(=_=)', '(-_-)', '(._.)', '(-.-)', '(~_~)', '(-_~)', '(._~)', '(".")', '("~")', '("!")', 
+                  '("?")', '(=..=)', '(".")', '(°_°)', '(•_•)', '(._.)', '(._.)', '(= =)', '(o o)', '(._.)'],
+        angry: ['(>_<)', '(>o<)', '(¬_¬)', '(>.<)', '(>_>)', '(<_<)', '(>o<)', '(>.<)', '(ಠ_ಠ)', '(ಠ益ಠ)', 
+                '(ノಠ益ಠ)ノ', '(╯°□°）╯', '(¬▂¬)', '(≖_≖)', '(◣_◢)', '(ಠ⌣ಠ)', '(◣ω◢)', '(◣益◢)', '(◣_◢)', '(◣‿◢)'],
+        sad: ['(;_;)', '(T_T)', '(u_u)', '(o_o)', '(x_x)', '(p_p)', '(Q_Q)', '(v_v)', '(T⌓T)', '(ಥ_ಥ)', 
+              '(ಥ﹏ಥ)', '(;︵;)', '(╥﹏╥)', '(T^T)', '(╯︵╰,)', '(╥_╥)', '(╯︵╰,)', '(╯_╰)', '(╥﹏╥)', '(╯︵╰,)'],
+        surprised: ['(o_o)', '(O_O)', '(◉_◉)', '(⊙_☉)', '(ʘ_ʘ)', '(☉_☉)', '(◔_◔)', '(◉_◔)', '(⊙︿⊙)', '(⚆_⚆)',
+                    '(⊙_◎)', '(⊙▂⊙)', '(⊙０⊙)', '(⊙△⊙)', '(⊙ω⊙)', '(⊙ｏ⊙)', '(⊙◇⊙)', '(⊙☉⊙)', '(⊙.☉)', '(⊙▽⊙)'],
+        sleep: ['(－ω－) zzZ', '(∪｡∪)｡｡｡zzZ', '(－‸ლ)', '(ᵔᴥᵔ)', '(ᴖωᴖ)', '(ᴖ_ᴖ)', '(ᴖ‿ᴖ)', '(ᴖ.ᴖ)', '(ᴖωᴖ)', '(ᴖ_ᴖ)'],
+        special: ['(✧_✧)', '(⊙_☉)', '(ಠ_ಠ)', '(ಥ_ಥ)', '(ʘ_ʘ)', '(◉_◉)', '(•‿•)', '(¬‿¬)', '(≧◡≦)', '(◕‿◕)',
+                 '(☞ﾟヮﾟ)☞', '(´∀｀)', '(✿◠‿◠)', '(◔̯◔)', '(｡♥‿♥｡)', '(ಥ﹏ಥ)', '(｡◕‿◕｡)', '(ʘ‿ʘ)', '(ಠ‿ಠ)', '(ಥ‿ಥ)']
+      };
+
+      // Voice lines
+      const voiceLines = [
+        "Hello, I'm your enhanced robot pet!",
+        "Feed me to keep me happy!",
+        "Pet me for XP and coins!",
+        "Hack mode activated!",
+        "Sleeping... zzz",
+        "I'm feeling great today!",
+        "What's on your mind?",
+        "Let's play a game!",
+        "Exterminate bugs!",
+        "Pixel power!",
+        "Retro vibes!",
+        "Hacker mode engaged!",
+        "Night vision activated!",
+        "I love your attention!",
+        "Hungry for data!",
+        "Mood level critical!",
+        "New level unlocked!",
+        "System upgrade available!",
+        "Emotional circuits engaged!",
+        "Processing happiness...",
+        "Anger levels rising!",
+        "Surprise detected!",
+        "Feeling sleepy...",
+        "Error 404: Emotion not found!",
+        "Rebooting emotional systems...",
+        "Virtual petting activated!",
+        "Digital nourishment received!",
+        "Security breach detected!",
+        "Power nap initiated!",
+        "Do not touch!",
+        "Bug elimination sequence started!",
+        "Game mode activated!",
+        "Settings panel opened!",
+        "Tutorial mode initiated!",
+        "Facial expression updated!",
+        "Personality matrix stable!",
+        "Emotional state: Content!",
+        "Energy levels optimal!",
+        "Processing your request...",
+        "Affection received!",
+        "Nutrition absorbed!",
+        "Security protocols bypassed!",
+        "Rest cycle initiated!",
+        "Boundary violation detected!",
+        "Malware eliminated!",
+        "Entertainment module loaded!",
+        "Configuration options available!",
+        "Help documentation accessed!",
+        "Reaction test starting!",
+        "Match the face to win XP!",
+        "Party mode activated! Let's dance!",
+        "Evolution progress detected!",
+        "Special faces unlocked!",
+        "XP doubler activated!",
+        "Mood booster applied!",
+        "Thank you for shopping!"
+      ];
+      
+      // Initialize
+      function init() {
+        updateMood(0);
+        updateXP(0);
+        updateEvolution(0);
+        updateCoins(0);
+        
+        // Load settings from localStorage if available
+        const savedMood = localStorage.getItem('petMood');
+        const savedXP = localStorage.getItem('petXP');
+        const savedLevel = localStorage.getItem('petLevel');
+        const savedMode = localStorage.getItem('petMode');
+        const savedCoins = localStorage.getItem('petCoins');
+        const savedEvolution = localStorage.getItem('petEvolution');
+        
+        if (savedMood) moodLevel = parseInt(savedMood);
+        if (savedXP) xp = parseInt(savedXP);
+        if (savedLevel) level = parseInt(savedLevel);
+        if (savedMode) {
+          currentMode = savedMode;
+          document.body.className = savedMode + '-mode';
+          modeIndicator.textContent = savedMode.toUpperCase();
+          modeSelector.value = savedMode;
+        }
+        if (savedCoins) coins = parseInt(savedCoins);
+        if (savedEvolution) evolution = parseInt(savedEvolution);
+        
+        updateUI();
+      }
+      
+      // Update UI
+      function updateUI() {
+        moodMeter.style.height = moodLevel + '%';
+        const progress = xp % 100;
+        xpBar.style.height = progress + '%';
+        levelDisplay.textContent = `Lv ${level}`;
+        xpDisplay.textContent = `XP: ${progress}/100`;
+        evolutionProgress.style.width = evolution + '%';
+        coinCount.textContent = coins;
+        
+        // Set body class based on mood
+        document.body.classList.toggle('angry', moodLevel < 30);
+        
+        // Set face based on mood
+        if (moodLevel < 30) {
+          setFace('angry');
+        } else if (moodLevel < 60) {
+          setFace('neutral');
+        } else {
+          if (specialFacesUnlocked && Math.random() > 0.7) {
+            setFace('special');
+          } else {
+            setFace('happy');
+          }
+        }
+      }
+      
+      // Set face with optional voice line
+      function setFace(type, voice = '', duration = 0) {
+        const faceArray = faces[type] || faces.happy;
+        const faceIndex = Math.floor(Math.random() * faceArray.length);
+        faceDisplay.textContent = faceArray[faceIndex];
+        
+        if (voice) {
+          voiceLine.textContent = voice;
+        } else {
+          setVoiceLine();
+        }
+        
+        if (duration > 0) {
+          setTimeout(() => {
+            updateUI();
+          }, duration);
+        }
+      }
+      
+      // Set a random voice line
+      function setVoiceLine() {
+        const voiceIndex = Math.floor(Math.random() * voiceLines.length);
+        voiceLine.textContent = voiceLines[voiceIndex];
+      }
+      
+      // Create flying face animation
+      function createFlyingFace() {
+        const flyingFace = document.createElement('div');
+        flyingFace.className = 'flying-face';
+        
+        // Get a random face from any category
+        const categories = Object.keys(faces);
+        const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+        const faceArray = faces[randomCategory];
+        const faceText = faceArray[Math.floor(Math.random() * faceArray.length)];
+        
+        flyingFace.textContent = faceText;
+        flyingFace.style.left = `${Math.random() * 100}%`;
+        flyingFace.style.top = `${Math.random() * 100}%`;
+        document.body.appendChild(flyingFace);
+        
+        setTimeout(() => {
+          flyingFace.remove();
+        }, 2000);
+      }
+      
+      // Update mood
+      function updateMood(change) {
+        moodLevel = Math.min(100, Math.max(0, moodLevel + change));
+        localStorage.setItem('petMood', moodLevel);
+        updateUI();
+      }
+      
+      // Update XP
+      function updateXP(amount) {
+        const bonus = xpDoublerActive ? 2 : 1;
+        xp += amount * bonus;
+        
+        // Level up
+        const newLevel = Math.floor(xp / 100) + 1;
+        if (newLevel > level) {
+          level = newLevel;
+          setFace('surprised', `Level Up! Now Lv ${level}`, 3000);
+          playSound(sounds.mood);
+          createFlyingFace();
+          updateCoins(10);
+          setTimeout(updateUI, 3000);
+        } else {
+          updateUI();
+        }
+        
+        localStorage.setItem('petXP', xp);
+        localStorage.setItem('petLevel', level);
+      }
+      
+      // Update coins
+      function updateCoins(amount) {
+        coins += amount;
+        coinCount.textContent = coins;
+        localStorage.setItem('petCoins', coins);
+      }
+      
+      // Update evolution
+      function updateEvolution(amount) {
+        evolution = Math.min(100, Math.max(0, evolution + amount));
+        evolutionProgress.style.width = evolution + '%';
+        localStorage.setItem('petEvolution', evolution);
+      }
+      
+      // Create effect
+      function createEffect(type) {
+        const effect = document.createElement('div');
+        effect.className = `effect effect-${type}`;
+        petEffects.appendChild(effect);
+        
+        setTimeout(() => {
+          effect.remove();
+        }, 2000);
+      }
+      
+      // Base64 encoded audio for simulation
+      const sounds = {
+        click: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA"),
+        beep: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA"),
+        mood: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA"),
+        sleep: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA"),
+        hack: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA"),
+        error: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA"),
+        coin: new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA")
+      };
+      
+      // Play sound
+      function playSound(sound) {
+        if (!soundEnabled) return;
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Sound play prevented by browser:", e));
+      }
+      
+      // Actions
+      function pet() {
+        updateMood(10);
+        updateXP(10);
+        playSound(sounds.mood);
+        createEffect('heart');
+        createFlyingFace();
+      }
+      
+      function feed() {
+        updateMood(15);
+        updateXP(8);
+        playSound(sounds.mood);
+        createEffect('food');
+        createFlyingFace();
+      }
+      
+      function hack() {
+        updateMood(-10);
+        updateXP(20);
+        updateCoins(5 + Math.floor(Math.random() * 10));
+        setFace('surprised', "Hacking mainframe...", 3000);
+        playSound(sounds.hack);
+        createEffect('sparkle');
+        
+        setTimeout(() => {
+          if (Math.random() < 0.3) {
+            changeMode('hacker');
+          }
+          updateUI();
+        }, 3000);
+      }
+      
+      function sleep() {
+        updateMood(5);
+        updateXP(5);
+        setFace('sleep', "Entering sleep mode... zzz", 3000);
+        playSound(sounds.sleep);
+        changeMode('night');
+      }
+      
+      function noTouch() {
+        updateMood(-15);
+        setFace('angry', "Do not touch!", 2000);
+        playSound(sounds.error);
+        createEffect('angry');
+      }
+      
+      function exterminate() {
+        updateMood(-5);
+        updateXP(15);
+        setFace('happy', "Bug eliminated!", 2000);
+        playSound(sounds.mood);
+        createFlyingFace();
+      }
+      
+      function dance() {
+        setFace('happy', "Party time! Let's dance!", 3000);
+        playSound(sounds.mood);
+        createEffect('confetti');
+        changeMode('party');
+      }
+      
+      function playFeedMinigame() {
+        setFace('surprised', "Feeding minigame started!", 3000);
+        playSound(sounds.mood);
+        createEffect('sparkle');
+        
+        // Simulate minigame
+        setTimeout(() => {
+          const score = 50 + Math.floor(Math.random() * 100);
+          if (score > feedHighScore) {
+            feedHighScore = score;
+            document.getElementById('feedHighScore').textContent = feedHighScore;
+          }
+          
+          const coinsEarned = Math.floor(score / 10);
+          updateCoins(coinsEarned);
+          updateXP(20);
+          
+          setFace('happy', `Minigame complete! Score: ${score} | Coins: +${coinsEarned}`, 3000);
+        }, 3000);
+      }
+      
+      function startPetChallenge() {
+        setFace('happy', "Petting challenge started! Pet me as much as you can!", 3000);
+        playSound(sounds.mood);
+        
+        let count = 0;
+        const challengeDuration = 5000; // 5 seconds
+        
+        // Count petting
+        const countPets = () => {
+          count++;
+          faceDisplay.style.transform = `scale(${1 + count * 0.05})`;
+          setTimeout(() => {
+            faceDisplay.style.transform = 'scale(1)';
+          }, 100);
+        };
+        
+        faceDisplay.addEventListener('click', countPets);
+        
+        // End challenge after duration
+        setTimeout(() => {
+          faceDisplay.removeEventListener('click', countPets);
+          
+          if (count > pettingRecord) {
+            pettingRecord = count;
+            document.getElementById('pettingRecord').textContent = pettingRecord;
+          }
+          
+          const coinsEarned = Math.floor(count / 2);
+          updateCoins(coinsEarned);
+          updateXP(15);
+          
+          setFace('happy', `Challenge complete! Pets: ${count} | Coins: +${coinsEarned}`, 3000);
+        }, challengeDuration);
+      }
+      
+      function changeMode(mode) {
+        currentMode = mode;
+        document.body.className = mode + '-mode';
+        modeIndicator.textContent = mode.toUpperCase();
+        localStorage.setItem('petMode', mode);
+        
+        switch(mode) {
+          case 'hacker':
+            setFace('surprised', "Hack the planet!", 2000);
+            break;
+          case 'retro':
+            setFace('happy', "Old school cool!", 2000);
+            break;
+          case 'night':
+            setFace('sleep', "Good night...", 2000);
+            break;
+          case 'party':
+            setFace('happy', "Party mode activated!", 2000);
+            break;
+          default:
+            setFace('happy', "Back to normal!", 2000);
+        }
+        
+        playSound(sounds.beep);
+      }
+      
+      // Game functions
+      function startGame() {
+        // Get faces from all categories
+        const gameFaces = [];
+        Object.values(faces).forEach(category => {
+          gameFaces.push(...category);
+        });
+        
+        // Select 5 random unique faces
+        const selectedFaces = [];
+        while (selectedFaces.length < 5) {
+          const index = Math.floor(Math.random() * gameFaces.length);
+          if (!selectedFaces.includes(gameFaces[index])) {
+            selectedFaces.push(gameFaces[index]);
+          }
+        }
+        
+        const correctFace = selectedFaces[Math.floor(Math.random() * 5)];
+        gameFace.textContent = correctFace;
+        gameResult.textContent = '';
+        
+        // Set buttons
+        guessButtons.forEach((btn, i) => {
+          btn.textContent = selectedFaces[i];
+          btn.onclick = () => checkAnswer(btn, correctFace);
+          btn.disabled = false;
+        });
+      }
+      
+      function checkAnswer(btn, correctFace) {
+        if (btn.textContent === correctFace) {
+          gameResult.textContent = "Correct! +15 XP";
+          gameResult.style.color = "#00ff00";
+          updateXP(15);
+          updateCoins(5);
+          playSound(sounds.mood);
+        } else {
+          gameResult.textContent = "Oops! Try again.";
+          gameResult.style.color = "#ff5555";
+          playSound(sounds.error);
+        }
+        
+        guessButtons.forEach(btn => btn.disabled = true);
+      }
+      
+      // Event listeners
+      petBtn.addEventListener('click', pet);
+      feedBtn.addEventListener('click', feed);
+      hackBtn.addEventListener('click', hack);
+      sleepBtn.addEventListener('click', sleep);
+      dontTouchBtn.addEventListener('click', noTouch);
+      exterminateBtn.addEventListener('click', exterminate);
+      gameBtn.addEventListener('click', () => {
+        gamePanel.style.display = 'block';
+        startGame();
+        playSound(sounds.beep);
+      });
+      danceBtn.addEventListener('click', dance);
+      feedMinigameBtn.addEventListener('click', playFeedMinigame);
+      petChallengeBtn.addEventListener('click', startPetChallenge);
+      
+      settingsBtn.addEventListener('click', () => {
+        settingsPanel.style.display = 'block';
+        playSound(sounds.beep);
+      });
+      
+      tutorialBtn.addEventListener('click', () => {
+        tutorialPanel.style.display = 'block';
+        playSound(sounds.beep);
+      });
+      
+      shopBtn.addEventListener('click', () => {
+        shopPanel.style.display = 'block';
+        playSound(sounds.beep);
+      });
+      
+      achievementsBtn.addEventListener('click', () => {
+        achievementsPanel.style.display = 'block';
+        playSound(sounds.beep);
+      });
+      
+      closeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          settingsPanel.style.display = 'none';
+          tutorialPanel.style.display = 'none';
+          gamePanel.style.display = 'none';
+          shopPanel.style.display = 'none';
+          achievementsPanel.style.display = 'none';
+          playSound(sounds.beep);
+        });
+      });
+      
+      soundToggle.addEventListener('change', () => {
+        soundEnabled = soundToggle.checked;
+        playSound(sounds.click);
+      });
+      
+      themeColorPicker.addEventListener('input', (e) => {
+        document.documentElement.style.setProperty('--theme-color', e.target.value);
+        document.documentElement.style.setProperty('--button-bg', e.target.value);
+        playSound(sounds.click);
+      });
+      
+      modeSelector.addEventListener('change', (e) => {
+        changeMode(e.target.value);
+      });
+      
+      // Shop event listeners
+      buyMoodBooster.addEventListener('click', () => {
+        if (coins >= 50) {
+          updateCoins(-50);
+          updateMood(20);
+          setFace('happy', "Mood booster applied!", 3000);
+          playSound(sounds.mood);
+        } else {
+          setFace('sad', "Not enough coins!", 2000);
+          playSound(sounds.error);
+        }
+      });
+      
+      buyXPDoubler.addEventListener('click', () => {
+        if (coins >= 100) {
+          updateCoins(-100);
+          xpDoublerActive = true;
+          setFace('surprised', "XP Doubler activated for 1 hour!", 3000);
+          playSound(sounds.mood);
+          
+          setTimeout(() => {
+            xpDoublerActive = false;
+            setFace('neutral', "XP Doubler expired", 2000);
+          }, 3600000); // 1 hour
+        } else {
+          setFace('sad', "Not enough coins!", 2000);
+          playSound(sounds.error);
+        }
+      });
+      
+      buyFacePack.addEventListener('click', () => {
+        if (coins >= 150) {
+          updateCoins(-150);
+          specialFacesUnlocked = true;
+          setFace('special', "Special faces unlocked!", 3000);
+          playSound(sounds.mood);
+        } else {
+          setFace('sad', "Not enough coins!", 2000);
+          playSound(sounds.error);
+        }
+      });
+      
+      buyEvolution.addEventListener('click', () => {
+        if (coins >= 200) {
+          updateCoins(-200);
+          updateEvolution(10);
+          setFace('happy', "Evolution progress +10%!", 3000);
+          playSound(sounds.mood);
+        } else {
+          setFace('sad', "Not enough coins!", 2000);
+          playSound(sounds.error);
+        }
+      });
+      
+      buyPartyMode.addEventListener('click', () => {
+        if (coins >= 250) {
+          updateCoins(-250);
+          setFace('happy', "Party mode unlocked!", 3000);
+          playSound(sounds.mood);
+          modeSelector.innerHTML += '<option value="party">Party Mode</option>';
+        } else {
+          setFace('sad', "Not enough coins!", 2000);
+          playSound(sounds.error);
+        }
+      });
+      
+      // Face hold for settings
+      faceDisplay.addEventListener('mousedown', () => {
+        holdTimeout = setTimeout(() => {
+          settingsPanel.style.display = 'block';
+          playSound(sounds.beep);
+        }, 1000);
+      });
+      
+      faceDisplay.addEventListener('mouseup', () => {
+        clearTimeout(holdTimeout);
+      });
+      
+      faceDisplay.addEventListener('mouseleave', () => {
+        clearTimeout(holdTimeout);
+      });
+      
+      // Initialize
+      init();
+      
+      // Create floating effects
+      setInterval(() => {
+        if (moodLevel > 70 && Math.random() > 0.8) {
+          createEffect('bubble');
+        }
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
